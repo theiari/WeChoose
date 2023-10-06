@@ -2,7 +2,7 @@ import type { NextPage } from "next";
 import { MetaHeader } from "~~/components/MetaHeader";
 import { ContractData } from "~~/components/example-ui/ContractData";
 import { ContractInteraction } from "~~/components/example-ui/ContractInteraction";
-import { Header } from "~~/components/example-ui/Header";
+import { Header } from "~~/components/Header";
 import { Login } from "~~/components/example-ui/Login";
 
 const ExampleUI: NextPage = () => {
