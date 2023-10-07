@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ContractUI } from "~~/components/scaffold-eth";
+import { ContractUI } from "~~/components/scaffold-eth/Contract/ContractUI2";
 
 const NewPage = () => {
   return (
