@@ -10,28 +10,24 @@ import "hardhat/console.sol";
 /**
  * A smart contract that allows changing a state variable of the contract and tracking the changes
  * It also allows the owner to withdraw the Ether in the contract
- * @author BuidlGuidl
+ * @author theiari, ansep
  */
 contract YourContract {
 	// State Variables
 	address public immutable owner;
-	string public greeting = "Building Unstoppable Apps!!!";
-	bool public premium = false;
-	uint256 public totalCounter = 0;
+    //address[] public supervisors;
 	mapping(address => uint) public userGreetingCounter;
-
+    mapping(address => uint) public supervisors;
 	// Events: a way to emit log statements from smart contract that can be listened to by external parties
-	event GreetingChange(
-		address indexed greetingSetter,
-		string newGreeting,
-		bool premium,
-		uint256 value
-	);
+	
 
 	// Constructor: Called once on contract deployment
 	// Check packages/hardhat/deploy/00_deploy_your_contract.ts
 	constructor(address _owner) {
 		owner = _owner;
+        supervisors[0x583031D1113aD414F02576BD6afaBfb302140225] = 0;
+        supervisors[0xdD870fA1b7C4700F2BD7f44238821C26f7392148] = 1;
+
 	}
 
 	// Modifier: used to define a set of rules that must be met before or after a function is executed
@@ -42,34 +38,7 @@ contract YourContract {
 		_;
 	}
 
-	/**
-	 * Function that allows anyone to change the state variable "greeting" of the contract and increase the counters
-	 *
-	 * @param _newGreeting (string memory) - new greeting to save on the contract
-	 */
-	function setGreeting(string memory _newGreeting) public payable {
-		// Print data to the hardhat chain console. Remove when deploying to a live network.
-		console.log(
-			"Setting new greeting '%s' from %s",
-			_newGreeting,
-			msg.sender
-		);
-
-		// Change state variables
-		greeting = _newGreeting;
-		totalCounter += 1;
-		userGreetingCounter[msg.sender] += 1;
-
-		// msg.value: built-in global variable that represents the amount of ether sent with the transaction
-		if (msg.value > 0) {
-			premium = true;
-		} else {
-			premium = false;
-		}
-
-		// emit: keyword used to trigger an event
-		emit GreetingChange(msg.sender, _newGreeting, msg.value > 0, 0);
-	}
+	
 
 	/**
 	 * Function that allows the owner to withdraw all the Ether in the contract
@@ -84,4 +53,126 @@ contract YourContract {
 	 * Function that allows the contract to receive ETH
 	 */
 	receive() external payable {}
+
+	 uint private counter = 0;
+     
+
+
+    // the structure of a ballot object
+
+   
+    struct Ballot {
+        string title;
+        string description;
+        string url;
+        uint creation_date; //instantly
+        uint duration;
+        uint received_votes;
+        bool approved; //this is changed at the very end of the idea stage, when it has succesfully concluded all the phases
+        address author;
+        string revised_description; //this parameter should be given by the supervisors AFTER the evaluation phase, it may be a IPFS url to a document, or just a simple condition
+        bool validated; //this is the value that the supervisor should change once the published idea is claimed valid/feasible/not illegal/suitable
+    
+    }
+
+    
+    mapping(uint => Ballot) private _ballots;
+    mapping(uint => mapping(uint => uint)) private _tally;
+    mapping(uint => mapping(address => bool)) public hasVoted;
+
+    function createBallot(
+        string memory title_,
+        string memory description_,
+        string memory url_,
+        uint duration_
+        
+    ) 
+    
+    external {
+        require(duration_ > 0, "Duration must be greater than 0");
+        _ballots[counter] = Ballot(title_ , description_, url_, block.timestamp,  duration_ ,0, false, msg.sender, "", false);
+        counter++;
+    }
+
+    function getBallotByIndex( uint index_) external view returns (Ballot memory ballot) {
+        ballot = _ballots[index_];
+    }
+
+
+
+    function getBallots() public view returns (Ballot[] memory){ //
+       Ballot[] memory temp = new Ballot[](counter);
+
+    for (uint i = 0; i < counter; i++) {
+        temp[i] = _ballots[i];
+    }
+    return temp;
+}
+
+    function isSupervisor(address sender) public view returns (bool) {
+        address[] memory temp = new address[](counter);
+
+        for (uint i = 0; i < counter; i++) {
+            if (sender == temp[i]) { //TOCHECK may be wrong
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function validateProject(uint ballotIndex_, string memory revised_description_) public {
+        bytes memory tempEmptyStringTest = bytes(revised_description_); 
+        require(isSupervisor(msg.sender), "not a supervisor");
+        require(tempEmptyStringTest.length !=0 , "Your revised description should contain something!");
+        _ballots[ballotIndex_].approved = true;
+        _ballots[ballotIndex_].revised_description = revised_description_;
+    }
+
+    function updateDescription (uint ballotIndex_, string memory updated_revision) public{
+        require(isSupervisor(msg.sender), "not a supervisor");
+        bytes memory tempEmptyStringTest = bytes(updated_revision);
+        require(tempEmptyStringTest.length !=0 , "Your description should contain something!");
+        _ballots[ballotIndex_].revised_description = updated_revision;
+
+    }
+
+
+    function Vote(uint ballotIndex_) external {
+        Ballot storage ballot = _ballots[ballotIndex_];
+        require(
+            !hasVoted[ballotIndex_][msg.sender],
+            "Address already casted a vote for ballot"
+        );
+        
+        require(
+            ballot.validated == true,
+            "The project has not been validated by any supervisor!"
+        );
+
+        require(
+            block.timestamp >= ballot.creation_date,
+            "Can't cast before start time"
+        );
+        require(
+            block.timestamp < ballot.creation_date + ballot.duration,
+            "Can't cast after end time"
+        );
+        
+        ballot.received_votes++;
+        hasVoted[ballotIndex_][msg.sender] = true;
+        
+    }
+
+    //a little big buggy, since it's possible to also call non-existant indexes
+    function getVotesForAProject(
+        uint ballotIndex_
+    )
+     external view returns (uint) {
+        return _ballots[ballotIndex_].received_votes;
+    }
+
+    function getTimeBlock()public view returns (uint256){
+        return block.timestamp;
+    }
+
 }
