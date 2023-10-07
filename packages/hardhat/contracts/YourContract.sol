@@ -120,19 +120,27 @@ contract YourContract {
         return false;
     }
 
-    function approveProject(uint ballotIndex_, uint budget_) public {
+    function validateProject(uint ballotIndex_, uint budget_) public {
         require(isSupervisor(msg.sender), "not a supervisor");
         require(budget_ > 500, "check your budget again");
         _ballots[ballotIndex_].approved = true;
         _ballots[ballotIndex_].budget = budget_;
     }
 
+
+
     function Vote(uint ballotIndex_) external {
+        Ballot storage ballot = _ballots[ballotIndex_];
         require(
             !hasVoted[ballotIndex_][msg.sender],
             "Address already casted a vote for ballot"
         );
-        Ballot storage ballot = _ballots[ballotIndex_];
+        
+        require(
+            ballot.validated == true,
+            "The project has not been validated by any supervisor!"
+        );
+
         require(
             block.timestamp >= ballot.creation_date,
             "Can't cast before start time"
@@ -141,48 +149,19 @@ contract YourContract {
             block.timestamp < ballot.creation_date + ballot.duration,
             "Can't cast after end time"
         );
+        
         ballot.received_votes++;
         hasVoted[ballotIndex_][msg.sender] = true;
         
     }
 
     //a little big buggy, since it's possible to also call non-existant indexes
-    function getTally(
+    function getVotesForAProject(
         uint ballotIndex_
     )
      external view returns (uint) {
         return _ballots[ballotIndex_].received_votes;
     }
-
-    /*function results(uint ballotIndex_) external view returns (uint[] memory) {
-        Ballot memory ballot = _ballots[ballotIndex_];
-        uint len = ballot.options.length;
-        uint[] memory result = new uint[](len);
-        for (uint i = 0; i < len; i++) {
-            result[i] = _tally[ballotIndex_][i];
-        }
-        return result;
-    }*/
-
-    /*function winners(uint ballotIndex_) external view returns (bool[] memory) {
-        Ballot memory ballot = _ballots[ballotIndex_];
-        uint len = ballot.options.length;
-        uint[] memory result = new uint[](len);
-        uint max;
-        for (uint i = 0; i < len; i++) {
-            result[i] = _tally[ballotIndex_][i];
-            if (result[i] > max) {
-                max = result[i];
-            }
-        }
-        bool[] memory winner = new bool[](len);
-        for (uint i = 0; i < len; i++) {
-            if (result[i] == max) {
-                winner[i] = true;
-            }
-        }
-        return winner;
-    }*/
 
     function getTimeBlock()public view returns (uint256){
         return block.timestamp;
