@@ -10,7 +10,7 @@ import "hardhat/console.sol";
 /**
  * A smart contract that allows changing a state variable of the contract and tracking the changes
  * It also allows the owner to withdraw the Ether in the contract
- * @author BuidlGuidl
+ * @author theiari, ansep
  */
 contract YourContract {
 	// State Variables
@@ -70,7 +70,7 @@ contract YourContract {
         uint received_votes;
         bool approved; //this is changed at the very end of the idea stage, when it has succesfully concluded all the phases
         address author;
-        uint budget; //this parameter should be given by the supervisors AFTER the evaluation phase
+        string revised_description; //this parameter should be given by the supervisors AFTER the evaluation phase, it may be a IPFS url to a document, or just a simple condition
         bool validated; //this is the value that the supervisor should change once the published idea is claimed valid/feasible/not illegal/suitable
     
     }
@@ -90,7 +90,7 @@ contract YourContract {
     
     external {
         require(duration_ > 0, "Duration must be greater than 0");
-        _ballots[counter] = Ballot(title_ , description_, url_, block.timestamp,  duration_ ,0, false, msg.sender, 0, false);
+        _ballots[counter] = Ballot(title_ , description_, url_, block.timestamp,  duration_ ,0, false, msg.sender, "", false);
         counter++;
     }
 
@@ -120,13 +120,21 @@ contract YourContract {
         return false;
     }
 
-    function validateProject(uint ballotIndex_, uint budget_) public {
+    function validateProject(uint ballotIndex_, string memory revised_description_) public {
+        bytes memory tempEmptyStringTest = bytes(revised_description_); 
         require(isSupervisor(msg.sender), "not a supervisor");
-        require(budget_ > 500, "check your budget again");
+        require(tempEmptyStringTest.length !=0 , "Your revised description should contain something!");
         _ballots[ballotIndex_].approved = true;
-        _ballots[ballotIndex_].budget = budget_;
+        _ballots[ballotIndex_].revised_description = revised_description_;
     }
 
+    function updateDescription (uint ballotIndex_, string memory updated_revision) public{
+        require(isSupervisor(msg.sender), "not a supervisor");
+        bytes memory tempEmptyStringTest = bytes(updated_revision);
+        require(tempEmptyStringTest.length !=0 , "Your description should contain something!");
+        _ballots[ballotIndex_].revised_description = updated_revision;
+
+    }
 
 
     function Vote(uint ballotIndex_) external {
