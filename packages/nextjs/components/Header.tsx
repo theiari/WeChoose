@@ -3,7 +3,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useAccount } from "wagmi";
-import { Bars3Icon, ClipboardDocumentCheckIcon, LightBulbIcon, QueueListIcon } from "@heroicons/react/24/outline";
+import {
+  Bars3Icon,
+  ClipboardDocumentCheckIcon,
+  LightBulbIcon,
+  MagnifyingGlassIcon,
+  QueueListIcon,
+} from "@heroicons/react/24/outline";
 import { RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import { useOutsideClick } from "~~/hooks/scaffold-eth";
 
@@ -58,6 +64,12 @@ export const Header = () => {
             <NavLink href="/approved">
               <QueueListIcon className="h-4 w-4" />
               Approved Ideas
+            </NavLink>
+          </li>
+          <li>
+            <NavLink href="/blockexplorer">
+              <MagnifyingGlassIcon className="h-4 w-4" />
+              Block Explorer
             </NavLink>
           </li>
         </>
