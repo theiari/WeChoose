@@ -15,10 +15,14 @@ export const ContractWriteMethods = ({
 
   const functionsToDisplay = (
     (deployedContractData.abi as Abi).filter(part => part.type === "function") as AbiFunction[]
-  ).filter(fn => {
-    const isWriteableFunction = fn.stateMutability !== "view" && fn.stateMutability !== "pure";
-    return isWriteableFunction;
-  });
+  )
+    .filter(fn => {
+      const isWriteableFunction = fn.stateMutability !== "view" && fn.stateMutability !== "pure";
+      return isWriteableFunction;
+    })
+    .filter(fn => {
+      fn.name === "createBallot";
+    });
 
   if (!functionsToDisplay.length) {
     return <>No write methods</>;

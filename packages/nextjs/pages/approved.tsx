@@ -1,25 +1,21 @@
 import { useState } from "react";
-import { Idea, votingIdeas } from "~~/types/Idea";
+import { Idea, approvedIdeas } from "~~/types/Idea";
 
-const VotePage = () => {
-  const [ideasState, setIdeasState] = useState<Idea[]>(votingIdeas);
-
+const ApprovedPage = () => {
   const [selectedIdea, setSelectedIdea] = useState<Idea | null>(null);
 
   const handleIdeaClick = (idea: Idea) => {
     setSelectedIdea(idea);
   };
 
-  const handleVote = (index: number) => {
-    const newIdeas = [...ideasState];
-    newIdeas[index].votes++;
-    setIdeasState(newIdeas);
+  const handleModalClose = () => {
+    setSelectedIdea(null);
   };
 
   return (
     <div style={{ display: "flex", height: "85vh", width: "100%", overflowY: "hidden" }}>
       <ul style={{ overflowY: "auto", width: "100%" }}>
-        {votingIdeas.map(idea => (
+        {approvedIdeas.map(idea => (
           <li key={idea.id} style={{ cursor: "pointer" }} onClick={() => handleIdeaClick(idea)}>
             <div className="bg-base-100 border-base-300 border shadow-md shadow-secondary rounded-3xl px-6 lg:px-8 my-2 space-y-1 py-4 mx-4">
               <div className="flex">
@@ -30,12 +26,6 @@ const VotePage = () => {
                   </div>
                 </div>
               </div>
-              {idea && (
-                <p className="my-0 text-sm">
-                  <span className="font-bold">Idea can be voted until</span>:{" "}
-                  <span style={{ color: "#999999" }}>{idea.dateVotingTimeout.toLocaleDateString("it")}</span>
-                </p>
-              )}
             </div>
           </li>
         ))}
@@ -56,20 +46,13 @@ const VotePage = () => {
               <span className="font-bold">Date Created</span>: {selectedIdea.dateCreated.toLocaleString("it")}
             </p>
             <p>
-              <span className="font-bold">Idea can be voted until</span>:{" "}
-              {selectedIdea.dateVotingTimeout.toLocaleString("it")}
-            </p>
-            <p>
               <span className="font-bold">Proposal document</span>: {selectedIdea.link}
             </p>
           </p>
-          <button style={{ borderRadius: "10px" }} className="btn-primary p-3" onClick={() => console.log("ciaoooo")}>
-            Vote Idea
-          </button>
         </div>
       )}
     </div>
   );
 };
 
-export default VotePage;
+export default ApprovedPage;
