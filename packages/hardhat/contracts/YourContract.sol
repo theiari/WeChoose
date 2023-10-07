@@ -15,23 +15,19 @@ import "hardhat/console.sol";
 contract YourContract {
 	// State Variables
 	address public immutable owner;
-	string public greeting = "Building Unstoppable Apps!!!";
-	bool public premium = false;
-	uint256 public totalCounter = 0;
+    //address[] public supervisors;
 	mapping(address => uint) public userGreetingCounter;
-
+    mapping(address => uint) public supervisors;
 	// Events: a way to emit log statements from smart contract that can be listened to by external parties
-	event GreetingChange(
-		address indexed greetingSetter,
-		string newGreeting,
-		bool premium,
-		uint256 value
-	);
+	
 
 	// Constructor: Called once on contract deployment
 	// Check packages/hardhat/deploy/00_deploy_your_contract.ts
 	constructor(address _owner) {
 		owner = _owner;
+        supervisors[0x583031D1113aD414F02576BD6afaBfb302140225] = 0;
+        supervisors[0xdD870fA1b7C4700F2BD7f44238821C26f7392148] = 1;
+
 	}
 
 	// Modifier: used to define a set of rules that must be met before or after a function is executed
@@ -42,34 +38,7 @@ contract YourContract {
 		_;
 	}
 
-	/**
-	 * Function that allows anyone to change the state variable "greeting" of the contract and increase the counters
-	 *
-	 * @param _newGreeting (string memory) - new greeting to save on the contract
-	 */
-	function setGreeting(string memory _newGreeting) public payable {
-		// Print data to the hardhat chain console. Remove when deploying to a live network.
-		console.log(
-			"Setting new greeting '%s' from %s",
-			_newGreeting,
-			msg.sender
-		);
-
-		// Change state variables
-		greeting = _newGreeting;
-		totalCounter += 1;
-		userGreetingCounter[msg.sender] += 1;
-
-		// msg.value: built-in global variable that represents the amount of ether sent with the transaction
-		if (msg.value > 0) {
-			premium = true;
-		} else {
-			premium = false;
-		}
-
-		// emit: keyword used to trigger an event
-		emit GreetingChange(msg.sender, _newGreeting, msg.value > 0, 0);
-	}
+	
 
 	/**
 	 * Function that allows the owner to withdraw all the Ether in the contract
@@ -85,68 +54,107 @@ contract YourContract {
 	 */
 	receive() external payable {}
 
-	 uint public counter = 0;
+	 uint private counter = 0;
+     
+
 
     // the structure of a ballot object
+
+   
     struct Ballot {
-        string question;
-        string[] options;
-        uint startTime;
+        string title;
+        string description;
+        string url;
+        uint creation_date; //instantly
         uint duration;
+        uint received_votes;
+        bool approved; //this is changed at the very end of the idea stage, when it has succesfully concluded all the phases
+        address author;
+        uint budget; //this parameter should be given by the supervisors AFTER the evaluation phase
+        bool validated; //this is the value that the supervisor should change once the published idea is claimed valid/feasible/not illegal/suitable
+    
     }
 
+    
     mapping(uint => Ballot) private _ballots;
     mapping(uint => mapping(uint => uint)) private _tally;
     mapping(uint => mapping(address => bool)) public hasVoted;
 
     function createBallot(
-        string memory question_,
-        string[] memory options_,
-        uint startTime_,
+        string memory title_,
+        string memory description_,
+        string memory url_,
         uint duration_
-    ) external {
+        
+    ) 
+    
+    external {
         require(duration_ > 0, "Duration must be greater than 0");
-        require(
-            startTime_ > block.timestamp,
-            "Start time must be in the future"
-        );
-        require(options_.length >= 2, "Provide at minimum two options");
-        _ballots[counter] = Ballot(question_, options_, startTime_, duration_);
+        _ballots[counter] = Ballot(title_ , description_, url_, block.timestamp,  duration_ ,0, false, msg.sender, 0, false);
         counter++;
     }
 
-    function getBallotByIndex(
-        uint index_
-    ) external view returns (Ballot memory ballot) {
+    function getBallotByIndex( uint index_) external view returns (Ballot memory ballot) {
         ballot = _ballots[index_];
     }
 
-    function cast(uint ballotIndex_, uint optionIndex_) external {
+
+
+    function getBallots() public view returns (Ballot[] memory){ //
+       Ballot[] memory temp = new Ballot[](counter);
+
+    for (uint i = 0; i < counter; i++) {
+        temp[i] = _ballots[i];
+    }
+    return temp;
+}
+
+    function isSupervisor(address sender) public view returns (bool) {
+        address[] memory temp = new address[](counter);
+
+        for (uint i = 0; i < counter; i++) {
+            if (sender == temp[i]) { //TOCHECK may be wrong
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function approveProject(uint ballotIndex_, uint budget_) public {
+        require(isSupervisor(msg.sender), "not a supervisor");
+        require(budget_ > 500, "check your budget again");
+        _ballots[ballotIndex_].approved = true;
+        _ballots[ballotIndex_].budget = budget_;
+    }
+
+    function Vote(uint ballotIndex_) external {
         require(
             !hasVoted[ballotIndex_][msg.sender],
             "Address already casted a vote for ballot"
         );
-        Ballot memory ballot = _ballots[ballotIndex_];
+        Ballot storage ballot = _ballots[ballotIndex_];
         require(
-            block.timestamp >= ballot.startTime,
+            block.timestamp >= ballot.creation_date,
             "Can't cast before start time"
         );
         require(
-            block.timestamp < ballot.startTime + ballot.duration,
+            block.timestamp < ballot.creation_date + ballot.duration,
             "Can't cast after end time"
         );
-        _tally[ballotIndex_][optionIndex_]++;
+        ballot.received_votes++;
         hasVoted[ballotIndex_][msg.sender] = true;
+        
     }
 
+    //a little big buggy, since it's possible to also call non-existant indexes
     function getTally(
-        uint ballotIndex_,
-        uint optionIndex_
-    ) external view returns (uint) {
-        return _tally[ballotIndex_][optionIndex_];
+        uint ballotIndex_
+    )
+     external view returns (uint) {
+        return _ballots[ballotIndex_].received_votes;
     }
 
-    function results(uint ballotIndex_) external view returns (uint[] memory) {
+    /*function results(uint ballotIndex_) external view returns (uint[] memory) {
         Ballot memory ballot = _ballots[ballotIndex_];
         uint len = ballot.options.length;
         uint[] memory result = new uint[](len);
@@ -154,9 +162,9 @@ contract YourContract {
             result[i] = _tally[ballotIndex_][i];
         }
         return result;
-    }
+    }*/
 
-    function winners(uint ballotIndex_) external view returns (bool[] memory) {
+    /*function winners(uint ballotIndex_) external view returns (bool[] memory) {
         Ballot memory ballot = _ballots[ballotIndex_];
         uint len = ballot.options.length;
         uint[] memory result = new uint[](len);
@@ -174,7 +182,7 @@ contract YourContract {
             }
         }
         return winner;
-    }
+    }*/
 
     function getTimeBlock()public view returns (uint256){
         return block.timestamp;

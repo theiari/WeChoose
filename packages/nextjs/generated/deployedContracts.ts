@@ -5,7 +5,7 @@ const contracts = {
       name: "localhost",
       contracts: {
         YourContract: {
-          address: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+          address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
           abi: [
             {
               inputs: [
@@ -19,35 +19,17 @@ const contracts = {
               type: "constructor",
             },
             {
-              anonymous: false,
               inputs: [
                 {
-                  indexed: true,
-                  internalType: "address",
-                  name: "greetingSetter",
-                  type: "address",
-                },
-                {
-                  indexed: false,
-                  internalType: "string",
-                  name: "newGreeting",
-                  type: "string",
-                },
-                {
-                  indexed: false,
-                  internalType: "bool",
-                  name: "premium",
-                  type: "bool",
-                },
-                {
-                  indexed: false,
                   internalType: "uint256",
-                  name: "value",
+                  name: "ballotIndex_",
                   type: "uint256",
                 },
               ],
-              name: "GreetingChange",
-              type: "event",
+              name: "Vote",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
             },
             {
               inputs: [
@@ -56,28 +38,10 @@ const contracts = {
                   name: "ballotIndex_",
                   type: "uint256",
                 },
-                {
-                  internalType: "uint256",
-                  name: "optionIndex_",
-                  type: "uint256",
-                },
               ],
-              name: "cast",
+              name: "approveProject",
               outputs: [],
               stateMutability: "nonpayable",
-              type: "function",
-            },
-            {
-              inputs: [],
-              name: "counter",
-              outputs: [
-                {
-                  internalType: "uint256",
-                  name: "",
-                  type: "uint256",
-                },
-              ],
-              stateMutability: "view",
               type: "function",
             },
             {
@@ -88,14 +52,14 @@ const contracts = {
                   type: "string",
                 },
                 {
-                  internalType: "string[]",
-                  name: "options_",
-                  type: "string[]",
+                  internalType: "string",
+                  name: "description_",
+                  type: "string",
                 },
                 {
-                  internalType: "uint256",
-                  name: "startTime_",
-                  type: "uint256",
+                  internalType: "string",
+                  name: "url_",
+                  type: "string",
                 },
                 {
                   internalType: "uint256",
@@ -126,9 +90,14 @@ const contracts = {
                       type: "string",
                     },
                     {
-                      internalType: "string[]",
-                      name: "options",
-                      type: "string[]",
+                      internalType: "string",
+                      name: "description",
+                      type: "string",
+                    },
+                    {
+                      internalType: "string",
+                      name: "url",
+                      type: "string",
                     },
                     {
                       internalType: "uint256",
@@ -140,6 +109,16 @@ const contracts = {
                       name: "duration",
                       type: "uint256",
                     },
+                    {
+                      internalType: "uint256",
+                      name: "received_votes",
+                      type: "uint256",
+                    },
+                    {
+                      internalType: "bool",
+                      name: "approved",
+                      type: "bool",
+                    },
                   ],
                   internalType: "struct YourContract.Ballot",
                   name: "ballot",
@@ -150,15 +129,60 @@ const contracts = {
               type: "function",
             },
             {
+              inputs: [],
+              name: "getBallots",
+              outputs: [
+                {
+                  components: [
+                    {
+                      internalType: "string",
+                      name: "question",
+                      type: "string",
+                    },
+                    {
+                      internalType: "string",
+                      name: "description",
+                      type: "string",
+                    },
+                    {
+                      internalType: "string",
+                      name: "url",
+                      type: "string",
+                    },
+                    {
+                      internalType: "uint256",
+                      name: "startTime",
+                      type: "uint256",
+                    },
+                    {
+                      internalType: "uint256",
+                      name: "duration",
+                      type: "uint256",
+                    },
+                    {
+                      internalType: "uint256",
+                      name: "received_votes",
+                      type: "uint256",
+                    },
+                    {
+                      internalType: "bool",
+                      name: "approved",
+                      type: "bool",
+                    },
+                  ],
+                  internalType: "struct YourContract.Ballot[]",
+                  name: "",
+                  type: "tuple[]",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
               inputs: [
                 {
                   internalType: "uint256",
                   name: "ballotIndex_",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "optionIndex_",
                   type: "uint256",
                 },
               ],
@@ -181,19 +205,6 @@ const contracts = {
                   internalType: "uint256",
                   name: "",
                   type: "uint256",
-                },
-              ],
-              stateMutability: "view",
-              type: "function",
-            },
-            {
-              inputs: [],
-              name: "greeting",
-              outputs: [
-                {
-                  internalType: "string",
-                  name: "",
-                  type: "string",
                 },
               ],
               stateMutability: "view",
@@ -224,6 +235,25 @@ const contracts = {
               type: "function",
             },
             {
+              inputs: [
+                {
+                  internalType: "address",
+                  name: "sender",
+                  type: "address",
+                },
+              ],
+              name: "isSupervisor",
+              outputs: [
+                {
+                  internalType: "bool",
+                  name: "",
+                  type: "bool",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
               inputs: [],
               name: "owner",
               outputs: [
@@ -237,53 +267,14 @@ const contracts = {
               type: "function",
             },
             {
-              inputs: [],
-              name: "premium",
-              outputs: [
-                {
-                  internalType: "bool",
-                  name: "",
-                  type: "bool",
-                },
-              ],
-              stateMutability: "view",
-              type: "function",
-            },
-            {
               inputs: [
                 {
-                  internalType: "uint256",
-                  name: "ballotIndex_",
-                  type: "uint256",
-                },
-              ],
-              name: "results",
-              outputs: [
-                {
-                  internalType: "uint256[]",
+                  internalType: "address",
                   name: "",
-                  type: "uint256[]",
+                  type: "address",
                 },
               ],
-              stateMutability: "view",
-              type: "function",
-            },
-            {
-              inputs: [
-                {
-                  internalType: "string",
-                  name: "_newGreeting",
-                  type: "string",
-                },
-              ],
-              name: "setGreeting",
-              outputs: [],
-              stateMutability: "payable",
-              type: "function",
-            },
-            {
-              inputs: [],
-              name: "totalCounter",
+              name: "supervisors",
               outputs: [
                 {
                   internalType: "uint256",
@@ -308,25 +299,6 @@ const contracts = {
                   internalType: "uint256",
                   name: "",
                   type: "uint256",
-                },
-              ],
-              stateMutability: "view",
-              type: "function",
-            },
-            {
-              inputs: [
-                {
-                  internalType: "uint256",
-                  name: "ballotIndex_",
-                  type: "uint256",
-                },
-              ],
-              name: "winners",
-              outputs: [
-                {
-                  internalType: "bool[]",
-                  name: "",
-                  type: "bool[]",
                 },
               ],
               stateMutability: "view",
