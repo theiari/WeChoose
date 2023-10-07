@@ -46,9 +46,6 @@ const ApprovedPage = () => {
               <span className="font-bold">Date Created</span>: {selectedIdea.dateCreated.toLocaleString("it")}
             </p>
             <p>
-              <span className="font-bold">Budget</span>: {selectedIdea.budget} €
-            </p>
-            <p>
               <span className="font-bold">Proposal document</span>: {selectedIdea.link}
             </p>
           </p>
