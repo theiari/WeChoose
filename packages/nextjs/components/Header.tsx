@@ -2,6 +2,7 @@ import React, { useCallback, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useAccount } from "wagmi";
 import { Bars3Icon, ClipboardDocumentCheckIcon, LightBulbIcon, QueueListIcon } from "@heroicons/react/24/outline";
 import { RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import { useOutsideClick } from "~~/hooks/scaffold-eth";
@@ -39,24 +40,28 @@ export const Header = () => {
       <li>
         <NavLink href="/">Home</NavLink>
       </li>
-      <li>
-        <NavLink href="/new">
-          <LightBulbIcon className="h-4 w-4" />
-          Push Idea
-        </NavLink>
-      </li>
-      <li>
-        <NavLink href="/vote">
-          <ClipboardDocumentCheckIcon className="h-4 w-4" />
-          Vote Ideas
-        </NavLink>
-      </li>
-      <li>
-        <NavLink href="/approved">
-          <QueueListIcon className="h-4 w-4" />
-          Approved Ideas
-        </NavLink>
-      </li>
+      {useAccount().address && (
+        <>
+          <li>
+            <NavLink href="/new">
+              <LightBulbIcon className="h-4 w-4" />
+              Push Idea
+            </NavLink>
+          </li>
+          <li>
+            <NavLink href="/vote">
+              <ClipboardDocumentCheckIcon className="h-4 w-4" />
+              Vote Ideas
+            </NavLink>
+          </li>
+          <li>
+            <NavLink href="/approved">
+              <QueueListIcon className="h-4 w-4" />
+              Approved Ideas
+            </NavLink>
+          </li>
+        </>
+      )}
     </>
   );
 
