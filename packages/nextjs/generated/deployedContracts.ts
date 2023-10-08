@@ -5,7 +5,7 @@ const contracts = {
       name: "localhost",
       contracts: {
         YourContract: {
-          address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+          address: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
           abi: [
             {
               inputs: [
@@ -265,7 +265,7 @@ const contracts = {
               inputs: [
                 {
                   internalType: "address",
-                  name: "sender",
+                  name: "sender_",
                   type: "address",
                 },
               ],
@@ -296,17 +296,17 @@ const contracts = {
             {
               inputs: [
                 {
-                  internalType: "address",
+                  internalType: "uint256",
                   name: "",
-                  type: "address",
+                  type: "uint256",
                 },
               ],
               name: "supervisors",
               outputs: [
                 {
-                  internalType: "uint256",
+                  internalType: "address",
                   name: "",
-                  type: "uint256",
+                  type: "address",
                 },
               ],
               stateMutability: "view",
