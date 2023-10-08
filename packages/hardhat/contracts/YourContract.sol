@@ -17,7 +17,7 @@ contract YourContract {
 	address public immutable owner;
     //address[] public supervisors;
 	mapping(address => uint) public userGreetingCounter;
-    mapping(address => uint) public supervisors;
+    address[] public supervisors;
 	// Events: a way to emit log statements from smart contract that can be listened to by external parties
 	
 
@@ -25,9 +25,10 @@ contract YourContract {
 	// Check packages/hardhat/deploy/00_deploy_your_contract.ts
 	constructor(address _owner) {
 		owner = _owner;
-        supervisors[0x583031D1113aD414F02576BD6afaBfb302140225] = 0;
-        supervisors[0xdD870fA1b7C4700F2BD7f44238821C26f7392148] = 1;
-
+        //supervisors[0xdD2FD4581271e230360230F9337D5c0430Bf44C0] = 0; //0xde9be858da4a475276426320d5e9262ecfc3ba460bfac56360bfa6c4c28b4ee0
+        //supervisors[0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199] = 1; //0xdf57089febbacf7ba0bc227dafbffa9fc08a93fdc68e1e42411a14efcf23656e
+        supervisors.push(0xdD2FD4581271e230360230F9337D5c0430Bf44C0);
+        supervisors.push(0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199);
 	}
 
 	// Modifier: used to define a set of rules that must be met before or after a function is executed
@@ -111,11 +112,10 @@ contract YourContract {
     return temp;
 }
 
-    function isSupervisor(address sender) public view returns (bool) {
-        address[] memory temp = new address[](counter);
-
-        for (uint i = 0; i < counter; i++) {
-            if (sender == temp[i]) { //TOCHECK may be wrong
+    function isSupervisor(address sender_) public view returns (bool) {
+        for (uint i = 0; i < supervisors.length; i++) {
+            
+            if (supervisors[i] == sender_) {
                 return true;
             }
         }
