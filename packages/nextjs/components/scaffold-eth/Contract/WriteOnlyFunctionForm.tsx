@@ -81,7 +81,7 @@ export const WriteOnlyFunctionForm = ({ abiFunction, onChange, contractAddress }
   return (
     <div className="py-5 space-y-3 first:pt-0 last:pb-1">
       <div className={`flex gap-3 ${zeroInputs ? "flex-row justify-between items-center" : "flex-col"}`}>
-        <p className="font-medium my-0 break-words">{abiFunction.name}</p>
+        {/* <p className="font-medium my-0 break-words">{abiFunction.name}</p> */}
         {inputs}
         {abiFunction.stateMutability === "payable" ? (
           <IntegerInput
