@@ -45,10 +45,6 @@ export const DisplayVariable = ({ contractAddress, abiFunction, refreshDisplayVa
       },
     ],
     functionName: "vote",
-    onError(error: Error) {
-      console.log(error.name);
-      notification.error(error.message);
-    },
   });
   const [selectedIdea, setSelectedIdea] = useState<Idea | null>(null);
   const handleIdeaClick = (idea: Idea) => {
@@ -62,67 +58,62 @@ export const DisplayVariable = ({ contractAddress, abiFunction, refreshDisplayVa
   //   refetch();
   // }, [refetch, refreshDisplayVariables]);
   if (!result) return null;
-  const validatedResults = result.filter((idea: Idea) => idea.validated);
-  if (validatedResults.length === 0)
+  const approvedResults = result?.filter((idea: Idea) => idea.validated && idea.approved && idea.received_votes > 9);
+  if (approvedResults.length === 0)
     return (
-      <div className="flex justify-center items-center h-full">
-        <h1 className="text-2xl">No ideas to vote on</h1>
+      <div className="flex flex-col items-center justify-center h-full">
+        <h1 className="text-2xl">No approved ideas</h1>
       </div>
     );
 
   return (
     <>
-      {validatedResults.map((idea: Idea) => (
-        <>
-          {selectedIdea && selectedIdea.ballotId === idea.ballotId ? (
-            <li key={idea.ballotId} style={{ cursor: "pointer" }} onClick={() => handleIdeaClick(idea)}>
-              <div className="bg-secondary border-base-200 border shadow-md shadow-secondary rounded-3xl px-6 lg:px-8 my-2 space-y-1 py-4 mx-4">
-                <div className="flex">
-                  <div className="flex flex-col gap-1">
-                    <span className="font-bold">{idea.title}</span>
-                    <div className="flex gap-1 items-center">
-                      <span className="text-sm">{idea.description}</span>
+      {result
+        .filter((idea: Idea) => idea.validated && idea.approved && idea.received_votes > 9)
+        .map((idea: Idea) => (
+          <>
+            {selectedIdea && selectedIdea.ballotId === idea.ballotId ? (
+              <li key={idea.ballotId} style={{ cursor: "pointer" }} onClick={() => handleIdeaClick(idea)}>
+                <div className="bg-secondary border-base-200 border shadow-md shadow-secondary rounded-3xl px-6 lg:px-8 my-2 space-y-1 py-4 mx-4">
+                  <div className="flex">
+                    <div className="flex flex-col gap-1">
+                      <span className="font-bold">{idea.title}</span>
+                      <div className="flex gap-1 items-center">
+                        <span className="text-sm">{idea.description}</span>
+                      </div>
                     </div>
                   </div>
+                  <p>
+                    <span className="font-bold">Revised description</span>: {idea.revised_description}
+                  </p>
+                  <p>
+                    <span className="font-bold">Proposal document</span>: {idea.url}
+                  </p>
+                  <p>
+                    <span className="font-bold">Received votes</span>: {idea.received_votes || 0}
+                  </p>
                 </div>
-                <p>
-                  <span className="font-bold">Revised description:</span>: {idea.revised_description}
-                </p>
-                <p>
-                  <span className="font-bold">Proposal document</span>: {idea.url}
-                </p>
-                <p>
-                  {" "}
-                  <button
-                    style={{ borderRadius: "10px" }}
-                    className="btn-primary p-3"
-                    onClick={() => write({ args: [idea.ballotId] })}
-                  >
-                    Vote Idea
-                  </button>
-                </p>
-              </div>
-            </li>
-          ) : (
-            <li key={idea.ballotId} style={{ cursor: "pointer" }} onClick={() => handleIdeaClick(idea)}>
-              <div className="bg-base-100 border-base-300 border shadow-md shadow-secondary rounded-3xl px-6 lg:px-8 my-2 space-y-1 py-4 mx-4">
-                <div className="flex">
-                  <div className="flex flex-col gap-1">
-                    <span className="font-bold">{idea.title}</span>
-                    <div className="flex gap-1 items-center">
-                      <span className="text-sm">{idea.description}</span>
+              </li>
+            ) : (
+              <li key={idea.ballotId} style={{ cursor: "pointer" }} onClick={() => handleIdeaClick(idea)}>
+                <div className="bg-base-100 border-base-300 border shadow-md shadow-secondary rounded-3xl px-6 lg:px-8 my-2 space-y-1 py-4 mx-4">
+                  <div className="flex">
+                    <div className="flex flex-col gap-1">
+                      <span className="font-bold">{idea.title}</span>
+                      <div className="flex gap-1 items-center">
+                        <span className="text-sm">{idea.description}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-                {/* <p className="my-0 text-sm">
+                  {/* <p className="my-0 text-sm">
                   <span className="font-bold">Idea can be voted until</span>:{" "}
                   <span style={{ color: "#999999" }}>{idea.dateVotingTimeout.toLocaleDateString("it")}</span>
                 </p> */}
-              </div>
-            </li>
-          )}
-        </>
-      ))}
+                </div>
+              </li>
+            )}
+          </>
+        ))}
     </>
     // <div className="space-y-1 pb-2">
     //   <div className="flex items-center gap-2">

@@ -37,18 +37,19 @@ export const DisplayVariable = ({ contractAddress, abiFunction, refreshDisplayVa
             name: "ballotIndex_",
             type: "uint256",
           },
+          {
+            internalType: "string",
+            name: "revised_description_",
+            type: "string",
+          },
         ],
-        name: "vote",
+        name: "validateProject",
         outputs: [],
         stateMutability: "nonpayable",
         type: "function",
       },
     ],
-    functionName: "vote",
-    onError(error: Error) {
-      console.log(error.name);
-      notification.error(error.message);
-    },
+    functionName: "validateProject",
   });
   const [selectedIdea, setSelectedIdea] = useState<Idea | null>(null);
   const handleIdeaClick = (idea: Idea) => {
@@ -58,21 +59,28 @@ export const DisplayVariable = ({ contractAddress, abiFunction, refreshDisplayVa
 
   const { showAnimation } = useAnimationConfig(result);
 
+  const handleTextClick = (e: any) => {
+    e.stopPropagation();
+  };
+  const [text, setText] = useState("");
+  const handleChangeText = (e: any) => {
+    setText(e.target.value);
+  };
   // useEffect(() => {
   //   refetch();
   // }, [refetch, refreshDisplayVariables]);
   if (!result) return null;
-  const validatedResults = result.filter((idea: Idea) => idea.validated);
-  if (validatedResults.length === 0)
+  const toValidateResults = result.filter((idea: Idea) => !idea.validated);
+  if (toValidateResults.length === 0)
     return (
       <div className="flex justify-center items-center h-full">
-        <h1 className="text-2xl">No ideas to vote on</h1>
+        <h1 className="text-2xl">No ideas to be validated</h1>
       </div>
     );
 
   return (
     <>
-      {validatedResults.map((idea: Idea) => (
+      {toValidateResults.map((idea: Idea) => (
         <>
           {selectedIdea && selectedIdea.ballotId === idea.ballotId ? (
             <li key={idea.ballotId} style={{ cursor: "pointer" }} onClick={() => handleIdeaClick(idea)}>
@@ -80,13 +88,19 @@ export const DisplayVariable = ({ contractAddress, abiFunction, refreshDisplayVa
                 <div className="flex">
                   <div className="flex flex-col gap-1">
                     <span className="font-bold">{idea.title}</span>
-                    <div className="flex gap-1 items-center">
+                    <div className="flex gap-1 items-center mb-3">
                       <span className="text-sm">{idea.description}</span>
                     </div>
                   </div>
                 </div>
                 <p>
-                  <span className="font-bold">Revised description:</span>: {idea.revised_description}
+                  <span className="font-bold">Update description</span>:{" "}
+                  <input
+                    type="text"
+                    onClick={handleTextClick}
+                    onChange={handleChangeText}
+                    style={{ width: "50vw", borderRadius: "10px", padding: 5 }}
+                  />
                 </p>
                 <p>
                   <span className="font-bold">Proposal document</span>: {idea.url}
@@ -96,9 +110,9 @@ export const DisplayVariable = ({ contractAddress, abiFunction, refreshDisplayVa
                   <button
                     style={{ borderRadius: "10px" }}
                     className="btn-primary p-3"
-                    onClick={() => write({ args: [idea.ballotId] })}
+                    onClick={() => write({ args: [idea.ballotId, text] })}
                   >
-                    Vote Idea
+                    Validate Idea
                   </button>
                 </p>
               </div>

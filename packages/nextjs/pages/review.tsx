@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Abi, AbiFunction } from "abitype";
 import { useContractReads } from "wagmi";
-import { DisplayVariable } from "~~/components/scaffold-eth/Contract/DisplayVariable3";
+import { DisplayVariable } from "~~/components/scaffold-eth/Contract/DisplayVariable4";
 import { useScaffoldContract } from "~~/hooks/scaffold-eth";
 import { Idea } from "~~/types/Idea";
 

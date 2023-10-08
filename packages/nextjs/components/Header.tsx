@@ -2,7 +2,7 @@ import React, { useCallback, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useAccount } from "wagmi";
+import { useAccount, useContractRead } from "wagmi";
 import {
   Bars3Icon,
   ClipboardDocumentCheckIcon,
@@ -11,7 +11,8 @@ import {
   QueueListIcon,
 } from "@heroicons/react/24/outline";
 import { FaucetButton, RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
-import { useOutsideClick } from "~~/hooks/scaffold-eth";
+import { useOutsideClick, useScaffoldContract } from "~~/hooks/scaffold-eth";
+import { notification } from "~~/utils/scaffold-eth";
 
 const NavLink = ({ href, children }: { href: string; children: React.ReactNode }) => {
   const router = useRouter();
@@ -40,6 +41,40 @@ export const Header = () => {
     burgerMenuRef,
     useCallback(() => setIsDrawerOpen(false), []),
   );
+  const { data: contract } = useScaffoldContract({ contractName: "YourContract" });
+  const {
+    data: result,
+    isFetching,
+    refetch,
+  } = useContractRead({
+    address: contract?.address,
+    functionName: "isSupervisor",
+    abi: [
+      {
+        inputs: [
+          {
+            internalType: "address",
+            name: "sender_",
+            type: "address",
+          },
+        ],
+        name: "isSupervisor",
+        outputs: [
+          {
+            internalType: "bool",
+            name: "",
+            type: "bool",
+          },
+        ],
+        stateMutability: "view",
+        type: "function",
+      },
+    ],
+    args: [useAccount().address],
+    onError: error => {
+      notification.error(error.message);
+    },
+  });
 
   const navLinks = (
     <>
@@ -54,12 +89,14 @@ export const Header = () => {
               Push Idea
             </NavLink>
           </li> */}
-          {/* <li>
-            <NavLink href="/vote">
-              <ClipboardDocumentCheckIcon className="h-4 w-4" />
-              Vote Ideas
-            </NavLink>
-          </li> */}
+          {result && (
+            <li>
+              <NavLink href="/review">
+                <ClipboardDocumentCheckIcon className="h-4 w-4" />
+                Review Ideas
+              </NavLink>
+            </li>
+          )}
           <li>
             <NavLink href="/approved">
               <QueueListIcon className="h-4 w-4" />
