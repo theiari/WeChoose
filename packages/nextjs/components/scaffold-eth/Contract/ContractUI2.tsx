@@ -23,13 +23,13 @@ export const ContractUI = ({ contractName, className = "" }: ContractUIProps) =>
   const { data: deployedContractData, isLoading: deployedContractLoading } = useDeployedContractInfo(contractName);
   const networkColor = useNetworkColor();
 
-  if (deployedContractLoading) {
-    return (
-      <div className="mt-14">
-        <Spinner width="50px" height="50px" />
-      </div>
-    );
-  }
+  // if (deployedContractLoading) {
+  //   return (
+  //     <div className="mt-14">
+  //       <Spinner width="50px" height="50px" />
+  //     </div>
+  //   );
+  // }
 
   if (!deployedContractData) {
     return (

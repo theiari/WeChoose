@@ -11,6 +11,7 @@ import {
 import { MetaHeader } from "~~/components/MetaHeader";
 import { RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import { ContractUI } from "~~/components/scaffold-eth/Contract/ContractUI2";
+import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
 import { Idea, votingIdeas } from "~~/types/Idea";
 import { getContractNames } from "~~/utils/scaffold-eth/contractNames";
 
@@ -32,7 +33,8 @@ const Home: NextPage = () => {
     setAddingIdea(true);
   };
   const contractNames = getContractNames();
-  console.log("contractNames", contractNames);
+  const { data: deployedContractData, isLoading: deployedContractLoading } = useDeployedContractInfo(contractNames[0]);
+  console.log(deployedContractData);
   return (
     <>
       <MetaHeader />
@@ -99,7 +101,14 @@ const Home: NextPage = () => {
                   </div>
                 </div>
               )} */}
-              {votingIdeas.map(idea => (
+              {/* {deployedContractData
+                .filter((fn: any) => fn.name === "getBallots")
+                .map((idea: any) => (
+                  <>
+                    <div>{idea}</div>
+                  </>
+                ))} */}
+              {/* {votingIdeas.map(idea => (
                 <>
                   {selectedIdea && selectedIdea.id === idea.id ? (
                     <li key={idea.id} style={{ cursor: "pointer" }} onClick={() => handleIdeaClick(idea)}>
@@ -150,7 +159,7 @@ const Home: NextPage = () => {
                     </li>
                   )}
                 </>
-              ))}
+              ))} */}
             </ul>
             {addingIdea && (
               <div style={{ position: "absolute", bottom: 0, left: 0 }}>
