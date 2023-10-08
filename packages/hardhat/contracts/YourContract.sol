@@ -140,7 +140,7 @@ contract YourContract {
 
     function approveProject(uint ballotIndex_) public{
         require(block.timestamp >_ballots[ballotIndex_].creation_date + _ballots[ballotIndex_].duration , "The ballot is not yet closed!");
-        require(_ballots[ballotIndex_].received_votes >10 , "The ballot has not reached the quorum!");
+        require(_ballots[ballotIndex_].received_votes >0 , "The ballot has not reached the quorum!");
         require(_ballots[ballotIndex_].validated == true, "the ballot has not been validated!");
         _ballots[ballotIndex_].approved = true;
     }
