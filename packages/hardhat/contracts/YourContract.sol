@@ -62,6 +62,7 @@ contract YourContract {
 
    
     struct Ballot {
+        uint ballotId;
         string title;
         string description;
         string url;
@@ -72,7 +73,7 @@ contract YourContract {
         address author;
         string revised_description; //this parameter should be given by the supervisors AFTER the evaluation phase, it may be a IPFS url to a document, or just a simple condition
         bool validated; //this is the value that the supervisor should change once the published idea is claimed valid/feasible/not illegal/suitable
-    
+        
     }
 
     
@@ -90,8 +91,9 @@ contract YourContract {
     
     external {
         require(duration_ > 0, "Duration must be greater than 0");
-        _ballots[counter] = Ballot(title_ , description_, url_, block.timestamp,  duration_ ,0, false, msg.sender, "", false);
+        _ballots[counter] = Ballot(counter,title_ , description_, url_, block.timestamp,  duration_ ,0, false, msg.sender, "", false);
         counter++;
+
     }
 
     function getBallotByIndex( uint index_) external view returns (Ballot memory ballot) {
