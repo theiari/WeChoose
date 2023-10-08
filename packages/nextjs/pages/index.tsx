@@ -1,7 +1,8 @@
 import { useState } from "react";
 import Link from "next/link";
+import { Abi, AbiFunction } from "abitype";
 import type { NextPage } from "next";
-import { useAccount } from "wagmi";
+import { useAccount, useContractRead, useContractReads } from "wagmi";
 import {
   ArrowRightOnRectangleIcon,
   ClipboardDocumentCheckIcon,
@@ -11,8 +12,9 @@ import {
 import { MetaHeader } from "~~/components/MetaHeader";
 import { RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import { ContractUI } from "~~/components/scaffold-eth/Contract/ContractUI2";
-import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
-import { Idea, votingIdeas } from "~~/types/Idea";
+import { DisplayVariable } from "~~/components/scaffold-eth/Contract/DisplayVariable2";
+import { useDeployedContractInfo, useScaffoldContract } from "~~/hooks/scaffold-eth";
+import { Idea } from "~~/types/Idea";
 import { getContractNames } from "~~/utils/scaffold-eth/contractNames";
 
 const Home: NextPage = () => {
@@ -23,7 +25,7 @@ const Home: NextPage = () => {
   });
   const [selectedIdea, setSelectedIdea] = useState<Idea | null>(null);
   const handleIdeaClick = (idea: Idea) => {
-    if (selectedIdea && selectedIdea.id === idea.id) return setSelectedIdea(null);
+    if (selectedIdea && selectedIdea.ballotId === idea.ballotId) return setSelectedIdea(null);
     setSelectedIdea(idea);
   };
 
@@ -32,16 +34,19 @@ const Home: NextPage = () => {
     if (addingIdea) return setAddingIdea(false);
     setAddingIdea(true);
   };
-  const contractNames = getContractNames();
-  const { data: deployedContractData, isLoading: deployedContractLoading } = useDeployedContractInfo(contractNames[0]);
-  console.log(deployedContractData);
+  const contractName = "YourContract";
+  const { data: contract } = useScaffoldContract({ contractName });
+  const { data: contractData } = useContractReads({
+    address: contract?.address,
+    abi: contract?.abi as Abi,
+  });
   return (
     <>
       <MetaHeader />
       <div className="flex items-center flex-col flex-grow pt-10">
         <button
-          style={{ position: "absolute", bottom: "2.5rem", right: "2rem" }}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          style={{ position: "absolute", bottom: "2.5rem", right: "2rem", borderRadius: "10px" }}
+          className="btn-primary p-3"
           onClick={handleAddIdea}
         >
           Add New Idea
@@ -89,81 +94,22 @@ const Home: NextPage = () => {
           // </div>
           <div style={{ display: "flex", height: "70vh", width: "100%", overflowY: "hidden" }}>
             <ul style={{ overflowY: "auto", width: "100%" }}>
-              {/* {votingIdeas.length !== 0 && (
-                <div className="flex-grow bg-base-300 w-full mt-16 px-8 py-12">
-                  <div className="flex justify-center items-center gap-12 flex-col sm:flex-row">
-                    <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-                      <ClipboardDocumentCheckIcon className="h-8 w-8 fill-secondary" />
-                      <p>
-                        <span className="link">Add a new idea</span>
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )} */}
-              {/* {deployedContractData
-                .filter((fn: any) => fn.name === "getBallots")
-                .map((idea: any) => (
-                  <>
-                    <div>{idea}</div>
-                  </>
-                ))} */}
-              {/* {votingIdeas.map(idea => (
-                <>
-                  {selectedIdea && selectedIdea.id === idea.id ? (
-                    <li key={idea.id} style={{ cursor: "pointer" }} onClick={() => handleIdeaClick(idea)}>
-                      <div className="bg-secondary border-base-200 border shadow-md shadow-secondary rounded-3xl px-6 lg:px-8 my-2 space-y-1 py-4 mx-4">
-                        <div className="flex">
-                          <div className="flex flex-col gap-1">
-                            <span className="font-bold">{idea.title}</span>
-                            <div className="flex gap-1 items-center">
-                              <span className="text-sm">{idea.description}</span>
-                            </div>
-                          </div>
-                        </div>
-                        <p className="my-0 text-sm">
-                          <span className="font-bold">Idea can be voted until</span>:{" "}
-                          <span style={{ color: "#999999" }}>{idea.dateVotingTimeout.toLocaleDateString("it")}</span>
-                        </p>
-                        <p>
-                          <span className="font-bold">Proposal document</span>: {idea.link}
-                        </p>
-                        <p>
-                          {" "}
-                          <button
-                            style={{ borderRadius: "10px" }}
-                            className="btn-primary p-3"
-                            onClick={() => console.log("ciaoooo")}
-                          >
-                            Vote Idea
-                          </button>
-                        </p>
-                      </div>
-                    </li>
-                  ) : (
-                    <li key={idea.id} style={{ cursor: "pointer" }} onClick={() => handleIdeaClick(idea)}>
-                      <div className="bg-base-100 border-base-300 border shadow-md shadow-secondary rounded-3xl px-6 lg:px-8 my-2 space-y-1 py-4 mx-4">
-                        <div className="flex">
-                          <div className="flex flex-col gap-1">
-                            <span className="font-bold">{idea.title}</span>
-                            <div className="flex gap-1 items-center">
-                              <span className="text-sm">{idea.description}</span>
-                            </div>
-                          </div>
-                        </div>
-                        <p className="my-0 text-sm">
-                          <span className="font-bold">Idea can be voted until</span>:{" "}
-                          <span style={{ color: "#999999" }}>{idea.dateVotingTimeout.toLocaleDateString("it")}</span>
-                        </p>
-                      </div>
-                    </li>
-                  )}
-                </>
-              ))} */}
+              <DisplayVariable
+                contractAddress={contract?.address}
+                abiFunction={contract?.abi.find((fn: AbiFunction) => fn.name === "getBallots")}
+                refreshDisplayVariables={true}
+              />
             </ul>
             {addingIdea && (
-              <div style={{ position: "absolute", bottom: 0, left: 0 }}>
-                <ContractUI contractName="YourContract" />
+              <div style={{ position: "absolute", bottom: 0, right: 0 }}>
+                <button
+                  style={{ position: "absolute", top: "7px", right: "22px", zIndex: 100 }}
+                  className="btn btn-ghost btn-sm"
+                  onClick={() => setAddingIdea(false)}
+                >
+                  X
+                </button>
+                <ContractUI contractName="YourContract" type="write" />
               </div>
             )}
           </div>
