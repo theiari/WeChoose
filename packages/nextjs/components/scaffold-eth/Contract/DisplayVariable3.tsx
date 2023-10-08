@@ -58,7 +58,7 @@ export const DisplayVariable = ({ contractAddress, abiFunction, refreshDisplayVa
   //   refetch();
   // }, [refetch, refreshDisplayVariables]);
   if (!result) return null;
-  const approvedResults = result?.filter((idea: Idea) => idea.validated && idea.approved && idea.received_votes > 9);
+  const approvedResults = result?.filter((idea: Idea) => idea.validated && idea.approved && idea.received_votes > 0);
   if (approvedResults.length === 0)
     return (
       <div className="flex flex-col items-center justify-center h-full">
@@ -69,7 +69,7 @@ export const DisplayVariable = ({ contractAddress, abiFunction, refreshDisplayVa
   return (
     <>
       {result
-        .filter((idea: Idea) => idea.validated && idea.approved && idea.received_votes > 9)
+        .filter((idea: Idea) => idea.validated && idea.approved && idea.received_votes > 0)
         .map((idea: Idea) => (
           <>
             {selectedIdea && selectedIdea.ballotId === idea.ballotId ? (
