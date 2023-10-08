@@ -16,7 +16,6 @@ contract YourContract {
 	// State Variables
 	address public immutable owner;
     //address[] public supervisors;
-	mapping(address => uint) public userGreetingCounter;
     address[] public supervisors;
 	// Events: a way to emit log statements from smart contract that can be listened to by external parties
 	
@@ -58,7 +57,6 @@ contract YourContract {
 	 uint private counter = 0;
      
 
-
     // the structure of a ballot object
 
    
@@ -80,7 +78,9 @@ contract YourContract {
     
     mapping(uint => Ballot) private _ballots;
     mapping(uint => mapping(uint => uint)) private _tally;
-    mapping(uint => mapping(address => bool)) public hasVoted;
+    mapping(uint => mapping(address => bool)) private hasVoted;
+    mapping(uint => address[]) private addresses;
+    address[] private temp ;
 
     function createBallot(
         string memory title_,
@@ -139,7 +139,7 @@ contract YourContract {
     }
 
 
-    function Vote(uint ballotIndex_) external {
+    function vote(uint ballotIndex_) external {
         Ballot storage ballot = _ballots[ballotIndex_];
         require(
             !hasVoted[ballotIndex_][msg.sender],
@@ -161,11 +161,14 @@ contract YourContract {
         );
         
         ballot.received_votes++;
+        temp.push(msg.sender);
         hasVoted[ballotIndex_][msg.sender] = true;
+        addresses[ballotIndex_] = temp;
+        
         
     }
 
-    //a little big buggy, since it's possible to also call non-existant indexes
+    
     function getVotesForAProject(
         uint ballotIndex_
     )
@@ -176,5 +179,17 @@ contract YourContract {
     function getTimeBlock()public view returns (uint256){
         return block.timestamp;
     }
+
+    function addSupervisors (address supervisor_) isOwner public{ //the owner can add new supervisors
+            supervisors.push(supervisor_);
+    }
+
+    function revealVotes(uint ballotIndex_) public view returns(address[] memory){ //at the very end, everyone can see who voted for a specific ballot
+        require(_ballots[ballotIndex_].approved == true, "ballot has not been approved!");
+        return addresses[ballotIndex_];
+        
+    }
+    
+
 
 }
