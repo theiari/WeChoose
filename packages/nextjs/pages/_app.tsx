@@ -19,7 +19,7 @@ const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
   const price = useNativeCurrencyPrice();
   const setNativeCurrencyPrice = useGlobalState(state => state.setNativeCurrencyPrice);
   // This variable is required for initial client side rendering of correct theme for RainbowKit
-  const [isDarkTheme, setIsDarkTheme] = useState(true);
+  const [isDarkTheme, setIsDarkTheme] = useState(true); // TODO: set false
   const { isDarkMode } = useDarkMode();
 
   useEffect(() => {
@@ -45,7 +45,7 @@ const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
           <main className="relative flex flex-col flex-1">
             <Component {...pageProps} />
           </main>
-          <Footer />
+          {/* <Footer /> */}
         </div>
         <Toaster />
       </RainbowKitProvider>

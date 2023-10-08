@@ -5,7 +5,7 @@ const contracts = {
       name: "localhost",
       contracts: {
         YourContract: {
-          address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+          address: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
           abi: [
             {
               inputs: [
@@ -21,12 +21,25 @@ const contracts = {
             {
               inputs: [
                 {
+                  internalType: "address",
+                  name: "supervisor_",
+                  type: "address",
+                },
+              ],
+              name: "addSupervisors",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
                   internalType: "uint256",
                   name: "ballotIndex_",
                   type: "uint256",
                 },
               ],
-              name: "Vote",
+              name: "approveProject",
               outputs: [],
               stateMutability: "nonpayable",
               type: "function",
@@ -72,6 +85,11 @@ const contracts = {
                 {
                   components: [
                     {
+                      internalType: "uint256",
+                      name: "ballotId",
+                      type: "uint256",
+                    },
+                    {
                       internalType: "string",
                       name: "title",
                       type: "string",
@@ -112,9 +130,9 @@ const contracts = {
                       type: "address",
                     },
                     {
-                      internalType: "uint256",
-                      name: "budget",
-                      type: "uint256",
+                      internalType: "string",
+                      name: "revised_description",
+                      type: "string",
                     },
                     {
                       internalType: "bool",
@@ -137,6 +155,11 @@ const contracts = {
                 {
                   components: [
                     {
+                      internalType: "uint256",
+                      name: "ballotId",
+                      type: "uint256",
+                    },
+                    {
                       internalType: "string",
                       name: "title",
                       type: "string",
@@ -177,9 +200,9 @@ const contracts = {
                       type: "address",
                     },
                     {
-                      internalType: "uint256",
-                      name: "budget",
-                      type: "uint256",
+                      internalType: "string",
+                      name: "revised_description",
+                      type: "string",
                     },
                     {
                       internalType: "bool",
@@ -230,32 +253,8 @@ const contracts = {
             {
               inputs: [
                 {
-                  internalType: "uint256",
-                  name: "",
-                  type: "uint256",
-                },
-                {
                   internalType: "address",
-                  name: "",
-                  type: "address",
-                },
-              ],
-              name: "hasVoted",
-              outputs: [
-                {
-                  internalType: "bool",
-                  name: "",
-                  type: "bool",
-                },
-              ],
-              stateMutability: "view",
-              type: "function",
-            },
-            {
-              inputs: [
-                {
-                  internalType: "address",
-                  name: "sender",
+                  name: "sender_",
                   type: "address",
                 },
               ],
@@ -286,17 +285,17 @@ const contracts = {
             {
               inputs: [
                 {
-                  internalType: "address",
-                  name: "",
-                  type: "address",
+                  internalType: "uint256",
+                  name: "ballotIndex_",
+                  type: "uint256",
                 },
               ],
-              name: "supervisors",
+              name: "revealVotes",
               outputs: [
                 {
-                  internalType: "uint256",
+                  internalType: "address[]",
                   name: "",
-                  type: "uint256",
+                  type: "address[]",
                 },
               ],
               stateMutability: "view",
@@ -305,17 +304,17 @@ const contracts = {
             {
               inputs: [
                 {
-                  internalType: "address",
-                  name: "",
-                  type: "address",
-                },
-              ],
-              name: "userGreetingCounter",
-              outputs: [
-                {
                   internalType: "uint256",
                   name: "",
                   type: "uint256",
+                },
+              ],
+              name: "supervisors",
+              outputs: [
+                {
+                  internalType: "address",
+                  name: "",
+                  type: "address",
                 },
               ],
               stateMutability: "view",
@@ -329,12 +328,43 @@ const contracts = {
                   type: "uint256",
                 },
                 {
+                  internalType: "string",
+                  name: "updated_revision",
+                  type: "string",
+                },
+              ],
+              name: "updateDescription",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
                   internalType: "uint256",
-                  name: "budget_",
+                  name: "ballotIndex_",
                   type: "uint256",
+                },
+                {
+                  internalType: "string",
+                  name: "revised_description_",
+                  type: "string",
                 },
               ],
               name: "validateProject",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "ballotIndex_",
+                  type: "uint256",
+                },
+              ],
+              name: "vote",
               outputs: [],
               stateMutability: "nonpayable",
               type: "function",

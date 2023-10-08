@@ -2,9 +2,17 @@ import React, { useCallback, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Bars3Icon, ClipboardDocumentCheckIcon, LightBulbIcon, QueueListIcon } from "@heroicons/react/24/outline";
+import { useAccount, useContractRead } from "wagmi";
+import {
+  Bars3Icon,
+  ClipboardDocumentCheckIcon,
+  LightBulbIcon,
+  MagnifyingGlassIcon,
+  QueueListIcon,
+} from "@heroicons/react/24/outline";
 import { FaucetButton, RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
-import { useOutsideClick } from "~~/hooks/scaffold-eth";
+import { useOutsideClick, useScaffoldContract } from "~~/hooks/scaffold-eth";
+import { notification } from "~~/utils/scaffold-eth";
 
 const NavLink = ({ href, children }: { href: string; children: React.ReactNode }) => {
   const router = useRouter();
@@ -33,30 +41,76 @@ export const Header = () => {
     burgerMenuRef,
     useCallback(() => setIsDrawerOpen(false), []),
   );
+  const { data: contract } = useScaffoldContract({ contractName: "YourContract" });
+  const {
+    data: result,
+    isFetching,
+    refetch,
+  } = useContractRead({
+    address: contract?.address,
+    functionName: "isSupervisor",
+    abi: [
+      {
+        inputs: [
+          {
+            internalType: "address",
+            name: "sender_",
+            type: "address",
+          },
+        ],
+        name: "isSupervisor",
+        outputs: [
+          {
+            internalType: "bool",
+            name: "",
+            type: "bool",
+          },
+        ],
+        stateMutability: "view",
+        type: "function",
+      },
+    ],
+    args: [useAccount().address],
+    onError: error => {
+      notification.error(error.message);
+    },
+  });
 
   const navLinks = (
     <>
       <li>
         <NavLink href="/">Home</NavLink>
       </li>
-      <li>
-        <NavLink href="/new">
-          <LightBulbIcon className="h-4 w-4" />
-          Push Idea
-        </NavLink>
-      </li>
-      <li>
-        <NavLink href="/vote">
-          <ClipboardDocumentCheckIcon className="h-4 w-4" />
-          Vote Ideas
-        </NavLink>
-      </li>
-      <li>
-        <NavLink href="/approved">
-          <QueueListIcon className="h-4 w-4" />
-          Approved Ideas
-        </NavLink>
-      </li>
+      {useAccount().address && (
+        <>
+          {/* <li>
+            <NavLink href="/new">
+              <LightBulbIcon className="h-4 w-4" />
+              Push Idea
+            </NavLink>
+          </li> */}
+          {result && (
+            <li>
+              <NavLink href="/review">
+                <ClipboardDocumentCheckIcon className="h-4 w-4" />
+                Review Ideas
+              </NavLink>
+            </li>
+          )}
+          <li>
+            <NavLink href="/approved">
+              <QueueListIcon className="h-4 w-4" />
+              Approved Ideas
+            </NavLink>
+          </li>
+          <li>
+            <NavLink href="/blockexplorer">
+              <MagnifyingGlassIcon className="h-4 w-4" />
+              Block Explorer
+            </NavLink>
+          </li>
+        </>
+      )}
     </>
   );
 
@@ -87,7 +141,13 @@ export const Header = () => {
         </div>
         <Link href="/" passHref className="hidden lg:flex items-center gap-2 ml-4 mr-6 shrink-0">
           <div className="flex relative w-10 h-10">
-            <Image alt="SE2 logo" className="cursor-pointer" fill src="/logo.svg" />
+            <Image
+              alt="We Choose - Home"
+              className="cursor-pointer"
+              fill
+              src="/logo.png"
+              style={{ borderRadius: "20%" }}
+            />
           </div>
           <div className="flex flex-col">
             <span className="font-bold leading-tight">We Choose</span>
@@ -98,6 +158,7 @@ export const Header = () => {
       </div>
       <div className="navbar-end flex-grow mr-4">
         <RainbowKitCustomConnectButton />
+        <FaucetButton />
       </div>
     </div>
   );

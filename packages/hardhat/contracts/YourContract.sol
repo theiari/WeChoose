@@ -16,8 +16,7 @@ contract YourContract {
 	// State Variables
 	address public immutable owner;
     //address[] public supervisors;
-	mapping(address => uint) public userGreetingCounter;
-    mapping(address => uint) public supervisors;
+    address[] public supervisors;
 	// Events: a way to emit log statements from smart contract that can be listened to by external parties
 	
 
@@ -25,9 +24,10 @@ contract YourContract {
 	// Check packages/hardhat/deploy/00_deploy_your_contract.ts
 	constructor(address _owner) {
 		owner = _owner;
-        supervisors[0x583031D1113aD414F02576BD6afaBfb302140225] = 0;
-        supervisors[0xdD870fA1b7C4700F2BD7f44238821C26f7392148] = 1;
-
+        //supervisors[0xdD2FD4581271e230360230F9337D5c0430Bf44C0] = 0; //0xde9be858da4a475276426320d5e9262ecfc3ba460bfac56360bfa6c4c28b4ee0
+        //supervisors[0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199] = 1; //0xdf57089febbacf7ba0bc227dafbffa9fc08a93fdc68e1e42411a14efcf23656e
+        supervisors.push(0xdD2FD4581271e230360230F9337D5c0430Bf44C0);
+        supervisors.push(0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199);
 	}
 
 	// Modifier: used to define a set of rules that must be met before or after a function is executed
@@ -57,11 +57,11 @@ contract YourContract {
 	 uint private counter = 0;
      
 
-
     // the structure of a ballot object
 
    
     struct Ballot {
+        uint ballotId;
         string title;
         string description;
         string url;
@@ -72,13 +72,15 @@ contract YourContract {
         address author;
         string revised_description; //this parameter should be given by the supervisors AFTER the evaluation phase, it may be a IPFS url to a document, or just a simple condition
         bool validated; //this is the value that the supervisor should change once the published idea is claimed valid/feasible/not illegal/suitable
-    
+        
     }
 
     
     mapping(uint => Ballot) private _ballots;
     mapping(uint => mapping(uint => uint)) private _tally;
-    mapping(uint => mapping(address => bool)) public hasVoted;
+    mapping(uint => mapping(address => bool)) private hasVoted;
+    mapping(uint => address[]) private addresses; //maps ballotIndex to the array of addresses
+    address[] private temp ;
 
     function createBallot(
         string memory title_,
@@ -90,8 +92,9 @@ contract YourContract {
     
     external {
         require(duration_ > 0, "Duration must be greater than 0");
-        _ballots[counter] = Ballot(title_ , description_, url_, block.timestamp,  duration_ ,0, false, msg.sender, "", false);
+        _ballots[counter] = Ballot(counter,title_ , description_, url_, block.timestamp,  duration_ ,0, false, msg.sender, "", false);
         counter++;
+
     }
 
     function getBallotByIndex( uint index_) external view returns (Ballot memory ballot) {
@@ -109,11 +112,10 @@ contract YourContract {
     return temp;
 }
 
-    function isSupervisor(address sender) public view returns (bool) {
-        address[] memory temp = new address[](counter);
-
-        for (uint i = 0; i < counter; i++) {
-            if (sender == temp[i]) { //TOCHECK may be wrong
+    function isSupervisor(address sender_) public view returns (bool) {
+        for (uint i = 0; i < supervisors.length; i++) {
+            
+            if (supervisors[i] == sender_) {
                 return true;
             }
         }
@@ -124,7 +126,7 @@ contract YourContract {
         bytes memory tempEmptyStringTest = bytes(revised_description_); 
         require(isSupervisor(msg.sender), "not a supervisor");
         require(tempEmptyStringTest.length !=0 , "Your revised description should contain something!");
-        _ballots[ballotIndex_].approved = true;
+        _ballots[ballotIndex_].validated = true;
         _ballots[ballotIndex_].revised_description = revised_description_;
     }
 
@@ -136,8 +138,15 @@ contract YourContract {
 
     }
 
+    function approveProject(uint ballotIndex_) public{
+        //require(block.timestamp >_ballots[ballotIndex_].creation_date + _ballots[ballotIndex_].duration , "The ballot is not yet closed!");
+        require(_ballots[ballotIndex_].received_votes >0 , "The ballot has not reached the quorum!");
+        require(_ballots[ballotIndex_].validated == true, "the ballot has not been validated!");
+        _ballots[ballotIndex_].approved = true;
+    }
 
-    function Vote(uint ballotIndex_) external {
+
+    function vote(uint ballotIndex_) external {
         Ballot storage ballot = _ballots[ballotIndex_];
         require(
             !hasVoted[ballotIndex_][msg.sender],
@@ -159,11 +168,16 @@ contract YourContract {
         );
         
         ballot.received_votes++;
+        temp.push(msg.sender);
         hasVoted[ballotIndex_][msg.sender] = true;
+        addresses[ballotIndex_] = temp;
+        
+        if (ballot.received_votes >0)
+            approveProject(ballot.ballotId);
         
     }
 
-    //a little big buggy, since it's possible to also call non-existant indexes
+    
     function getVotesForAProject(
         uint ballotIndex_
     )
@@ -174,5 +188,17 @@ contract YourContract {
     function getTimeBlock()public view returns (uint256){
         return block.timestamp;
     }
+
+    function addSupervisors (address supervisor_) isOwner public{ //the owner can add new supervisors
+            supervisors.push(supervisor_);
+    }
+
+    function revealVotes(uint ballotIndex_) public view returns(address[] memory){ //at the very end, everyone can see who voted for a specific ballot
+        require(_ballots[ballotIndex_].approved == true, "ballot has not been approved!");
+        return addresses[ballotIndex_];
+        
+    }
+    
+
 
 }

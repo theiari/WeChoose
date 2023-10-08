@@ -804,6 +804,37 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@gnosis.pm/safe-apps-onboard@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "@gnosis.pm/safe-apps-onboard@npm:0.3.0"
+  dependencies:
+    "@gnosis.pm/safe-apps-provider": 0.3.0
+  peerDependencies:
+    "@gnosis.pm/safe-apps-sdk": ^2.3.0
+    bnc-onboard: ^1.20.0
+  checksum: 3bad929ca761b4b5fcf3bf68e7f6f75b040281b8ed5b4224bd31b944e758312476e85e3b946c0a8a2b12a520c4767dec08a02c56d2c7196de6782ff717a0080b
+  languageName: node
+  linkType: hard
+
+"@gnosis.pm/safe-apps-provider@npm:0.3.0":
+  version: 0.3.0
+  resolution: "@gnosis.pm/safe-apps-provider@npm:0.3.0"
+  dependencies:
+    "@gnosis.pm/safe-apps-sdk": 2.3.0
+    events: ^3.3.0
+  checksum: 9e5daed98424269ec831303f14de80ee19a40cf439c6b7fb72e791e3c832f3f8f2aa18283741b0f34e0a3833246dbcd4316692be3c1085fe4125f19281b947f3
+  languageName: node
+  linkType: hard
+
+"@gnosis.pm/safe-apps-sdk@npm:2.3.0":
+  version: 2.3.0
+  resolution: "@gnosis.pm/safe-apps-sdk@npm:2.3.0"
+  dependencies:
+    semver: ^7.3.2
+  checksum: 6da8c6c9f459c9ec4a57f8babff268e0d6f43ddbab32c2d037e867c37a3ee67af36e378a8c53a8d70eaf32357d5f03f8cbe6ec6bd15f08c896b015edace2a8c9
+  languageName: node
+  linkType: hard
+
 "@heroicons/react@npm:^2.0.11":
   version: 2.0.11
   resolution: "@heroicons/react@npm:2.0.11"
@@ -11971,6 +12002,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "se-2@workspace:."
   dependencies:
+    "@gnosis.pm/safe-apps-onboard": ^0.3.0
     husky: ^8.0.1
     lint-staged: ^13.0.3
   languageName: unknown
@@ -12012,6 +12044,17 @@ __metadata:
   bin:
     semver: ./bin/semver.js
   checksum: 1b26ecf6db9e8292dd90df4e781d91875c0dcc1b1909e70f5d12959a23c7eebb8f01ea581c00783bbee72ceeaad9505797c381756326073850dc36ed284b21b9
+  languageName: node
+  linkType: hard
+
+"semver@npm:^7.3.2":
+  version: 7.5.4
+  resolution: "semver@npm:7.5.4"
+  dependencies:
+    lru-cache: ^6.0.0
+  bin:
+    semver: bin/semver.js
+  checksum: 12d8ad952fa353b0995bf180cdac205a4068b759a140e5d3c608317098b3575ac2f1e09182206bf2eb26120e1c0ed8fb92c48c592f6099680de56bb071423ca3
   languageName: node
   linkType: hard
 

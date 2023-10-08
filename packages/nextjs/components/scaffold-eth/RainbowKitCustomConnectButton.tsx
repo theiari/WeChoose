@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { QRCodeSVG } from "qrcode.react";
 import CopyToClipboard from "react-copy-to-clipboard";
 import { useDisconnect, useSwitchNetwork } from "wagmi";
 import {
@@ -20,7 +19,7 @@ import { getBlockExplorerAddressLink, getTargetNetwork } from "~~/utils/scaffold
  * Custom Wagmi Connect Button (watch balance + custom design)
  */
 export const RainbowKitCustomConnectButton = () => {
-  useAutoConnect();
+  // useAutoConnect();
   const networkColor = useNetworkColor();
   const configuredNetwork = getTargetNetwork();
   const { disconnect } = useDisconnect();
