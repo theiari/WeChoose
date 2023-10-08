@@ -5,7 +5,7 @@ const contracts = {
       name: "localhost",
       contracts: {
         YourContract: {
-          address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+          address: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
           abi: [
             {
               inputs: [
@@ -21,12 +21,25 @@ const contracts = {
             {
               inputs: [
                 {
+                  internalType: "address",
+                  name: "supervisor_",
+                  type: "address",
+                },
+              ],
+              name: "addSupervisors",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
                   internalType: "uint256",
                   name: "ballotIndex_",
                   type: "uint256",
                 },
               ],
-              name: "Vote",
+              name: "approveProject",
               outputs: [],
               stateMutability: "nonpayable",
               type: "function",
@@ -240,30 +253,6 @@ const contracts = {
             {
               inputs: [
                 {
-                  internalType: "uint256",
-                  name: "",
-                  type: "uint256",
-                },
-                {
-                  internalType: "address",
-                  name: "",
-                  type: "address",
-                },
-              ],
-              name: "hasVoted",
-              outputs: [
-                {
-                  internalType: "bool",
-                  name: "",
-                  type: "bool",
-                },
-              ],
-              stateMutability: "view",
-              type: "function",
-            },
-            {
-              inputs: [
-                {
                   internalType: "address",
                   name: "sender_",
                   type: "address",
@@ -288,6 +277,25 @@ const contracts = {
                   internalType: "address",
                   name: "",
                   type: "address",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "ballotIndex_",
+                  type: "uint256",
+                },
+              ],
+              name: "revealVotes",
+              outputs: [
+                {
+                  internalType: "address[]",
+                  name: "",
+                  type: "address[]",
                 },
               ],
               stateMutability: "view",
@@ -333,25 +341,6 @@ const contracts = {
             {
               inputs: [
                 {
-                  internalType: "address",
-                  name: "",
-                  type: "address",
-                },
-              ],
-              name: "userGreetingCounter",
-              outputs: [
-                {
-                  internalType: "uint256",
-                  name: "",
-                  type: "uint256",
-                },
-              ],
-              stateMutability: "view",
-              type: "function",
-            },
-            {
-              inputs: [
-                {
                   internalType: "uint256",
                   name: "ballotIndex_",
                   type: "uint256",
@@ -363,6 +352,19 @@ const contracts = {
                 },
               ],
               name: "validateProject",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "ballotIndex_",
+                  type: "uint256",
+                },
+              ],
+              name: "vote",
               outputs: [],
               stateMutability: "nonpayable",
               type: "function",

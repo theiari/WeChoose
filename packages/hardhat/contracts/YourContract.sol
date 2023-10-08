@@ -79,7 +79,7 @@ contract YourContract {
     mapping(uint => Ballot) private _ballots;
     mapping(uint => mapping(uint => uint)) private _tally;
     mapping(uint => mapping(address => bool)) private hasVoted;
-    mapping(uint => address[]) private addresses;
+    mapping(uint => address[]) private addresses; //maps ballotIndex to the array of addresses
     address[] private temp ;
 
     function createBallot(
@@ -126,7 +126,7 @@ contract YourContract {
         bytes memory tempEmptyStringTest = bytes(revised_description_); 
         require(isSupervisor(msg.sender), "not a supervisor");
         require(tempEmptyStringTest.length !=0 , "Your revised description should contain something!");
-        _ballots[ballotIndex_].approved = true;
+        _ballots[ballotIndex_].validated = true;
         _ballots[ballotIndex_].revised_description = revised_description_;
     }
 
@@ -136,6 +136,12 @@ contract YourContract {
         require(tempEmptyStringTest.length !=0 , "Your description should contain something!");
         _ballots[ballotIndex_].revised_description = updated_revision;
 
+    }
+
+    function approveProject(uint ballotIndex_) public{
+        require(block.timestamp >_ballots[ballotIndex_].creation_date + _ballots[ballotIndex_].duration , "The ballot is not yet closed!");
+        require(_ballots[ballotIndex_].received_votes >10 , "The ballot has not reached the quorum!");
+        _ballots[ballotIndex_].approved = true;
     }
 
 
