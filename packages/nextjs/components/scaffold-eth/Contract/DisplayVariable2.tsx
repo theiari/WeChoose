@@ -54,9 +54,9 @@ export const DisplayVariable = ({ contractAddress, abiFunction, refreshDisplayVa
 
   const { showAnimation } = useAnimationConfig(result);
 
-  useEffect(() => {
-    refetch();
-  }, [refetch, refreshDisplayVariables]);
+  // useEffect(() => {
+  //   refetch();
+  // }, [refetch, refreshDisplayVariables]);
   if (!result) return null;
   return (
     <>

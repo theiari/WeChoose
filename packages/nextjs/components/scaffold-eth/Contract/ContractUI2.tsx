@@ -52,7 +52,7 @@ export const ContractUI = ({ contractName, className = "", type }: ContractUIPro
               style={{ width: "100%" }}
             >
               <div className="flex items-center justify-between space-x-2">
-                <p className="my-0 text-sm" style={{ "margin-left": "22px" }}>
+                <p className="my-0 text-sm" style={{ marginLeft: "22px" }}>
                   Write here your idea!
                 </p>
               </div>

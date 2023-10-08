@@ -36,15 +36,10 @@ const Home: NextPage = () => {
   };
   const contractName = "YourContract";
   const { data: contract } = useScaffoldContract({ contractName });
-  console.log("contract", contract);
   const { data: contractData } = useContractReads({
     address: contract?.address,
     abi: contract?.abi as Abi,
   });
-  console.log(
-    "abifunctionvote",
-    contract?.abi.find((fn: AbiFunction) => fn.name === "Vote"),
-  );
   return (
     <>
       <MetaHeader />
@@ -108,7 +103,7 @@ const Home: NextPage = () => {
             {addingIdea && (
               <div style={{ position: "absolute", bottom: 0, right: 0 }}>
                 <button
-                  style={{ position: "absolute", top: "7px", right: "22px", "z-index": "100" }}
+                  style={{ position: "absolute", top: "7px", right: "22px", zIndex: 100 }}
                   className="btn btn-ghost btn-sm"
                   onClick={() => setAddingIdea(false)}
                 >
