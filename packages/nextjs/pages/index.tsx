@@ -44,13 +44,6 @@ const Home: NextPage = () => {
     <>
       <MetaHeader />
       <div className="flex items-center flex-col flex-grow pt-10">
-        <button
-          style={{ position: "absolute", bottom: "2.5rem", right: "2rem", borderRadius: "10px" }}
-          className="btn-primary p-3"
-          onClick={handleAddIdea}
-        >
-          Add New Idea
-        </button>
         <div className="px-5 mb-8">
           <h1 className="text-center mb-4">
             <span className="text-2xl">Welcome to</span> <span className="text-4xl font-bold">We Choose</span>
@@ -58,71 +51,48 @@ const Home: NextPage = () => {
           <div className="text-center text-xl">Vote for ideas you like!</div>
         </div>
         {loggedIn ? (
-          // <div className="flex-grow bg-base-300 w-full mt-16 px-8 py-12">
-          //   <div className="flex justify-center items-center gap-12 flex-col sm:flex-row">
-          //     <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-          //       <LightBulbIcon className="h-8 w-8 fill-secondary" />
-          //       <p>
-          //         Submit a new proposal through{" "}
-          //         <Link href="/new" passHref className="link">
-          //           Push Idea
-          //         </Link>{" "}
-          //         tab.
-          //       </p>
-          //     </div>
-          //     <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-          //       <ClipboardDocumentCheckIcon className="h-8 w-8 fill-secondary" />
-          //       <p>
-          //         Select your favourite in the{" "}
-          //         <Link href="/vote" passHref className="link">
-          //           Vote Ideas
-          //         </Link>{" "}
-          //         page.
-          //       </p>
-          //     </div>
-          //     <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-          //       <QueueListIcon className="h-8 w-8 fill-secondary" />
-          //       <p>
-          //         Check the list of latest{" "}
-          //         <Link href="/approved" passHref className="link">
-          //           Approved Ideas
-          //         </Link>{" "}
-          //         in the last tab.
-          //       </p>
-          //     </div>
-          //   </div>
-          // </div>
-          <div style={{ display: "flex", height: "70vh", width: "100%", overflowY: "hidden" }}>
-            <ul style={{ overflowY: "auto", width: "100%" }}>
-              <DisplayVariable
-                contractAddress={contract?.address}
-                abiFunction={contract?.abi.find((fn: AbiFunction) => fn.name === "getBallots")}
-                refreshDisplayVariables={true}
-              />
-            </ul>
-            {addingIdea && (
-              <div style={{ position: "absolute", bottom: 0, right: 0 }}>
-                <button
-                  style={{ position: "absolute", top: "7px", right: "22px", zIndex: 100 }}
-                  className="btn btn-ghost btn-sm"
-                  onClick={() => setAddingIdea(false)}
-                >
-                  X
-                </button>
-                <ContractUI contractName="YourContract" type="write" />
-              </div>
-            )}
-          </div>
+          <>
+            <button
+              style={{ position: "absolute", bottom: "2.5rem", right: "2rem", borderRadius: "10px" }}
+              className="btn-primary p-3"
+              onClick={handleAddIdea}
+            >
+              Add New Idea
+            </button>
+            <div style={{ display: "flex", height: "70vh", width: "100%", overflowY: "hidden" }}>
+              <ul style={{ overflowY: "auto", width: "100%" }}>
+                <DisplayVariable
+                  contractAddress={contract?.address}
+                  abiFunction={contract?.abi.find((fn: AbiFunction) => fn.name === "getBallots")}
+                  refreshDisplayVariables={true}
+                />
+              </ul>
+              {addingIdea && (
+                <div style={{ position: "absolute", bottom: 0, right: 0 }}>
+                  <button
+                    style={{ position: "absolute", top: "7px", right: "22px", zIndex: 100 }}
+                    className="btn btn-ghost btn-sm"
+                    onClick={() => setAddingIdea(false)}
+                  >
+                    X
+                  </button>
+                  <ContractUI contractName="YourContract" type="write" />
+                </div>
+              )}
+            </div>
+          </>
         ) : (
-          <div className="flex-grow bg-base-300 w-full mt-16 px-8 py-12">
-            <div className="flex justify-center items-center gap-12 flex-col sm:flex-row">
-              <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-                <ArrowRightOnRectangleIcon className="h-8 w-8 fill-secondary" />
-                <p>Login using the button below</p>
-                <RainbowKitCustomConnectButton />
+          <>
+            <div className="flex-grow bg-base-300 w-full mt-16 px-8 py-12">
+              <div className="flex justify-center items-center gap-12 flex-col sm:flex-row">
+                <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
+                  <ArrowRightOnRectangleIcon className="h-8 w-8 fill-secondary" />
+                  <p>Login using the button below</p>
+                  <RainbowKitCustomConnectButton />
+                </div>
               </div>
             </div>
-          </div>
+          </>
         )}
       </div>
     </>
