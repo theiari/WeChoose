@@ -48,18 +48,18 @@ export const Header = () => {
       </li>
       {useAccount().address && (
         <>
-          <li>
+          {/* <li>
             <NavLink href="/new">
               <LightBulbIcon className="h-4 w-4" />
               Push Idea
             </NavLink>
-          </li>
-          <li>
+          </li> */}
+          {/* <li>
             <NavLink href="/vote">
               <ClipboardDocumentCheckIcon className="h-4 w-4" />
               Vote Ideas
             </NavLink>
-          </li>
+          </li> */}
           <li>
             <NavLink href="/approved">
               <QueueListIcon className="h-4 w-4" />
@@ -104,7 +104,13 @@ export const Header = () => {
         </div>
         <Link href="/" passHref className="hidden lg:flex items-center gap-2 ml-4 mr-6 shrink-0">
           <div className="flex relative w-10 h-10">
-            <Image alt="SE2 logo" className="cursor-pointer" fill src="/logo.png" />
+            <Image
+              alt="We Choose - Home"
+              className="cursor-pointer"
+              fill
+              src="/logo.png"
+              style={{ borderRadius: "20%" }}
+            />
           </div>
           <div className="flex flex-col">
             <span className="font-bold leading-tight">We Choose</span>

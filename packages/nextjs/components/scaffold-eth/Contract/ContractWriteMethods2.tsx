@@ -12,6 +12,7 @@ export const ContractWriteMethods = ({
   if (!deployedContractData) {
     return null;
   }
+  console.log("deployedContractData", deployedContractData);
 
   const functionsToDisplay = (
     (deployedContractData.abi as Abi).filter(part => part.type === "function") as AbiFunction[]
@@ -21,7 +22,7 @@ export const ContractWriteMethods = ({
       return isWriteableFunction;
     })
     .filter(fn => {
-      fn.name === "createBallot";
+      return fn.name === "createBallot";
     });
 
   if (!functionsToDisplay.length) {
