@@ -5,7 +5,7 @@ const contracts = {
       name: "localhost",
       contracts: {
         YourContract: {
-          address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+          address: "0x0165878A594ca255338adfa4d48449f69242Eb8F",
           abi: [
             {
               inputs: [
@@ -72,6 +72,11 @@ const contracts = {
                 {
                   components: [
                     {
+                      internalType: "uint256",
+                      name: "ballotId",
+                      type: "uint256",
+                    },
+                    {
                       internalType: "string",
                       name: "title",
                       type: "string",
@@ -112,9 +117,9 @@ const contracts = {
                       type: "address",
                     },
                     {
-                      internalType: "uint256",
-                      name: "budget",
-                      type: "uint256",
+                      internalType: "string",
+                      name: "revised_description",
+                      type: "string",
                     },
                     {
                       internalType: "bool",
@@ -137,6 +142,11 @@ const contracts = {
                 {
                   components: [
                     {
+                      internalType: "uint256",
+                      name: "ballotId",
+                      type: "uint256",
+                    },
+                    {
                       internalType: "string",
                       name: "title",
                       type: "string",
@@ -177,9 +187,9 @@ const contracts = {
                       type: "address",
                     },
                     {
-                      internalType: "uint256",
-                      name: "budget",
-                      type: "uint256",
+                      internalType: "string",
+                      name: "revised_description",
+                      type: "string",
                     },
                     {
                       internalType: "bool",
@@ -305,6 +315,24 @@ const contracts = {
             {
               inputs: [
                 {
+                  internalType: "uint256",
+                  name: "ballotIndex_",
+                  type: "uint256",
+                },
+                {
+                  internalType: "string",
+                  name: "updated_revision",
+                  type: "string",
+                },
+              ],
+              name: "updateDescription",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
                   internalType: "address",
                   name: "",
                   type: "address",
@@ -329,9 +357,9 @@ const contracts = {
                   type: "uint256",
                 },
                 {
-                  internalType: "uint256",
-                  name: "budget_",
-                  type: "uint256",
+                  internalType: "string",
+                  name: "revised_description_",
+                  type: "string",
                 },
               ],
               name: "validateProject",
